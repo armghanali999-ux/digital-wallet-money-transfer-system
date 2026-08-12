@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Theme Settings · Digital Wallet{% endblock %}
+{% block content %}
+<div class="page-heading mb-4">
+  <p class="eyebrow mb-1">Personalization</p>
+  <h1 class="h2 mb-2">Choose your application theme</h1>
+  <p class="text-muted mb-0">Your selection applies instantly and follows your account on future logins.</p>
+</div>
+
+<div id="theme-status" class="alert d-none" role="status" aria-live="polite"></div>
+<form id="theme-csrf-token" class="d-none" aria-hidden="true">{% csrf_token %}</form>
+<div class="row g-4 theme-grid" data-theme-save-url="{% url 'save-theme' %}">
+  {% for key, theme in themes.items %}
+    <div class="col-sm-6 col-xl-4">
+      <button type="button" class="theme-preview-card card w-100 h-100 text-start {% if selected_theme == key %}selected{% endif %}"
+              data-theme-choice="{{ key }}" aria-pressed="{% if selected_theme == key %}true{% else %}false{% endif %}">
+        <span class="theme-preview-header" style="--preview-primary:{{ theme.primary }};--preview-secondary:{{ theme.secondary }};--preview-accent:{{ theme.accent }};--preview-background:{{ theme.background }}">
+          <span class="preview-sidebar"></span><span class="preview-main"><span></span><span></span><span></span></span>
+        </span>
+        <span class="card-body d-block">
+          <span class="d-flex justify-content-between align-items-center gap-2">
+            <strong>{{ theme.name }}</strong><span class="selection-indicator">{% if selected_theme == key %}Selected{% else %}Select{% endif %}</span>
+          </span>
+          <span class="theme-swatches mt-3" aria-label="Theme colors">
+            <i style="background:{{ theme.primary }}"></i><i style="background:{{ theme.secondary }}"></i><i style="background:{{ theme.accent }}"></i><i style="background:{{ theme.background }}"></i>
+          </span>
+        </span>
+      </button>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

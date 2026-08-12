@@ -1,0 +1,17 @@
+<div class="d-flex align-items-center gap-2 mb-4 px-2">
+  <span class="brand-mark" aria-hidden="true">$</span>
+  <div><div class="fw-bold">Digital Wallet</div><small class="text-white-50">Money Transfer System</small></div>
+</div>
+<nav>
+  <a class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}"><span class="sidebar-icon">⌂</span>Dashboard</a>
+  <a class="sidebar-link {% if request.resolver_match.url_name == 'wallet-create' %}active{% endif %}" href="{% url 'wallet-create' %}"><span class="sidebar-icon">＋</span>Create Wallet</a>
+  <a class="sidebar-link {% if request.resolver_match.url_name == 'deposit' %}active{% endif %}" href="{% url 'deposit' %}"><span class="sidebar-icon">↓</span>Deposit</a>
+  <a class="sidebar-link {% if request.resolver_match.url_name == 'withdraw' %}active{% endif %}" href="{% url 'withdraw' %}"><span class="sidebar-icon">↑</span>Withdraw</a>
+  <a class="sidebar-link {% if request.resolver_match.url_name == 'transfer' %}active{% endif %}" href="{% url 'transfer' %}"><span class="sidebar-icon">⇄</span>Transfer</a>
+  <a class="sidebar-link {% if request.resolver_match.url_name == 'history' or request.resolver_match.url_name == 'transaction-detail' %}active{% endif %}" href="{% url 'history' %}"><span class="sidebar-icon">≡</span>Transactions</a>
+  {% if user.is_staff or user.role == 'ADMIN' %}<a class="sidebar-link {% if 'administration' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'administration-dashboard' %}"><span class="sidebar-icon">⚙</span>Administration</a>{% endif %}
+  <a class="sidebar-link {% if request.resolver_match.url_name == 'profile-settings' %}active{% endif %}" href="{% url 'profile-settings' %}"><span class="sidebar-icon">◉</span>Theme Settings</a>
+</nav>
+<hr class="border-light opacity-25 my-4">
+<div class="px-2 mb-3"><small class="text-white-50">Signed in as</small><div class="text-truncate fw-semibold">{{ user.name|default:user.email }}</div><small class="text-white-50 text-truncate d-block">{{ user.email }}</small></div>
+<form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn btn-outline-light w-100" type="submit">Logout</button></form>

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Confirm Transfer · Digital Wallet{% endblock %}
+{% block content %}
+<div class="card p-4 mx-auto" style="max-width:640px">
+  <p class="eyebrow mb-1">Final review</p><h1 class="h3">Confirm transfer</h1>
+  {% if not recipient %}<div class="alert alert-danger">The recipient wallet does not exist. Go back and correct it.</div>{% endif %}
+  <dl class="row mt-4"><dt class="col-sm-5">From wallet</dt><dd class="col-sm-7">#{{ data.sender_wallet.id }} ({{ data.sender_wallet.currency }})</dd><dt class="col-sm-5">Recipient wallet</dt><dd class="col-sm-7">#{{ data.recipient_wallet_id }}{% if recipient %} — {{ recipient.owner.name }}{% endif %}</dd><dt class="col-sm-5">Amount</dt><dd class="col-sm-7 fw-bold">{{ data.amount }} {{ data.sender_wallet.currency }}</dd><dt class="col-sm-5">Description</dt><dd class="col-sm-7">{{ data.description|default:'—' }}</dd></dl>
+  <div class="alert alert-warning">Check the wallet and amount carefully. This financial operation cannot be edited after completion.</div>
+  <div class="d-flex gap-2"><a class="btn btn-outline-secondary" href="{% url 'transfer' %}">Cancel</a>{% if recipient %}<form method="post">{% csrf_token %}<input type="hidden" name="sender_wallet" value="{{ data.sender_wallet.id }}"><input type="hidden" name="recipient_wallet_id" value="{{ data.recipient_wallet_id }}"><input type="hidden" name="amount" value="{{ data.amount }}"><input type="hidden" name="description" value="{{ data.description }}"><input type="hidden" name="idempotency_key" value="{{ data.idempotency_key }}"><input type="hidden" name="confirmed" value="yes"><button class="btn btn-primary" type="submit">Confirm and transfer</button></form>{% endif %}</div>
+</div>
+{% endblock %}
