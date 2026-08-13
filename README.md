@@ -56,6 +56,51 @@ $python = 'C:\Users\ghori\Documents\Codex\DigitalWallet\Packages\Scripts\python.
 
 Open `http://127.0.0.1:8000/`. The purpose-built operations interface is at `/administration/`; the secondary maintenance admin is at `/django-admin/`.
 
+## Railway deployment from GitHub
+
+Railway deploys this project directly from the same GitHub repository. The repository root contains `railway.json`, so no Dockerfile, monorepo path, or relocated source tree is required.
+
+1. In Railway, choose **New Project → Deploy from GitHub repo** and select `armghanali999-ux/digital-wallet-money-transfer-system`.
+2. Add a Railway MySQL service to the same project.
+3. Generate a public domain for the application service.
+4. Add the application variables listed below. Reference the linked service rather than copying its credentials.
+5. Redeploy the application. The configured start command applies migrations before starting the production WSGI server.
+
+Required application variables:
+
+```text
+DJANGO_SECRET_KEY=<a long, unique random value>
+DJANGO_DEBUG=false
+DJANGO_ALLOWED_HOSTS=${{RAILWAY_PUBLIC_DOMAIN}}
+DJANGO_CSRF_TRUSTED_ORIGINS=https://${{RAILWAY_PUBLIC_DOMAIN}}
+DJANGO_SECURE_COOKIES=true
+DJANGO_SECURE_SSL_REDIRECT=false
+DJANGO_TIME_ZONE=Asia/Karachi
+DJANGO_LOG_LEVEL=INFO
+DATABASE_URL=${{MySQL.MYSQL_URL}}
+```
+
+`PORT` is injected automatically by Railway and must not be hard-coded. `DATABASE_URL` is parsed as a MySQL URL, including percent-encoded usernames/passwords. The individual `MYSQL_*` variables remain supported for local development.
+
+Railway settings:
+
+```text
+Root directory: /
+Builder: Nixpacks
+Build command: python manage.py collectstatic --noinput
+Start command: python manage.py migrate --noinput && waitress-serve --listen=0.0.0.0:$PORT config.wsgi:application
+Health-check path: /health/
+Health-check timeout: 120 seconds
+```
+
+The production start command binds to `0.0.0.0` and Railway's supplied port. WhiteNoise serves versioned static assets. The application database is the linked Railway MySQL service; local database files and credentials are never committed.
+
+To run migrations manually from a Railway service shell when needed:
+
+```text
+python manage.py migrate --noinput
+```
+
 ## Tests
 
 Tests use the isolated MySQL database named by `MYSQL_TEST_DATABASE` (default `test_digital_wallet`):

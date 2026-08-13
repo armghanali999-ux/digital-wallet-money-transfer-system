@@ -71,7 +71,7 @@ def test_login_and_registration_include_password_visibility_control():
     for path in ("/login/", "/register/"):
         response = client.get(path)
         assert response.status_code == 200
-        assert b'/static/js/theme.js' in response.content
+        assert b'/static/js/theme' in response.content and b'.js' in response.content
     script = (settings.BASE_DIR / "static" / "js" / "theme.js").read_text()
     assert "Show password" in script
     assert "password-toggle" in script

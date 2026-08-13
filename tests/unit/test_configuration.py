@@ -3,6 +3,7 @@ from django.test import override_settings
 from rest_framework.test import APIClient
 
 from common.domain.exceptions import ConflictError, DomainError
+from config.settings.local import mysql_database_config
 
 
 def test_test_settings_are_safe_and_mysql_backed():
@@ -14,6 +15,17 @@ def test_test_settings_are_safe_and_mysql_backed():
 def test_timezone_configuration_is_explicit():
     assert settings.TIME_ZONE == "Asia/Karachi"
     assert settings.USE_TZ is True
+
+
+def test_railway_mysql_database_url_is_parsed_safely(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "mysql://wallet%40user:p%40ss@mysql.internal:3307/wallet_db")
+    config = mysql_database_config()
+    assert config["ENGINE"] == "django.db.backends.mysql"
+    assert config["USER"] == "wallet@user"
+    assert config["PASSWORD"] == "p@ss"
+    assert config["HOST"] == "mysql.internal"
+    assert config["PORT"] == "3307"
+    assert config["NAME"] == "wallet_db"
 
 
 def test_health_endpoint_uses_consistent_success_shape():
