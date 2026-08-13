@@ -1,5 +1,6 @@
 [phases.setup]
-nixPkgs = ["python313", "gcc", "pkg-config", "mariadb-connector-c"]
+nixPkgs = ["python313", "gcc"]
+aptPkgs = ["default-libmysqlclient-dev", "pkg-config"]
 
 [phases.install]
 cmds = ["python -m venv --copies /opt/venv", ". /opt/venv/bin/activate && pip install -r requirements.txt"]
